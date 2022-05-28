@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core"
-// import { create } from "ipfs-http-client"
+import { create } from "ipfs-http-client"
 import { environment } from "src/environments/environment"
 @Injectable({
   providedIn: 'root'

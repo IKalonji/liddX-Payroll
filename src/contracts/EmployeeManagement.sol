@@ -1,14 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-// https://medium.com/robhitchens/solidity-crud-part-1-824ffa69509a
-// https://bitbucket.org/rhitchens2/soliditycrud/src/master/contracts/SolidityCRUD-part1.sol
-//
-// the python client for this contract is available at 
-// https://colab.research.google.com/drive/1JQAze2ZxRF1_AsGbdyQWr82XsFWPP3gk?usp=sharing
-//
+import "./chainlink/KeeperCompatible.sol"; 
 
-contract pmCrudCon {
+contract pmCrudCon is KeeperCompatibleInterface{
 
   struct dataRecord {
     string empName;
@@ -94,5 +89,18 @@ function deleteEmp(uint empID)
       empNameToDelete, 
       rowToDelete);
   }
+
+    function checkUpkeep(bytes calldata checkData ) external view override returns (bool upkeepNeeded, bytes memory /* performData */) {
+        upkeepNeeded = (block.timestamp - lastTimeStamp) > interval;
+        
+    }
+
+    function performUpkeep(bytes calldata performData ) external payable override {
+        if ((block.timestamp - lastTimeStamp) > interval ) {
+            lastTimeStamp = block.timestamp;
+            address(this).transfer(dataRecord['empSalary']);
+        }
+      
+    }  
 
 }
